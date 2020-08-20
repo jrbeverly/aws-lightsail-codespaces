@@ -1,3 +1,6 @@
+# Environment variable definitions
+*.env
+
 # Local .terraform directories
 **/.terraform/*
 
