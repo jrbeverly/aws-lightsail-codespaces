@@ -20,6 +20,8 @@ resource "aws_lightsail_instance" "app" {
     www  = local.url
     desc = "Cloud environment for running VSCode in the browser."
   }
+
+  user_data = file("provision/install.sh")
 }
 
 ## WORKAROUND
@@ -46,6 +48,7 @@ locals {
 }
 
 resource "null_resource" "firewall" {
+  depends_on = [aws_lightsail_instance.app]
   triggers = {
     public_ports = local.public_ports
     url          = local.url
