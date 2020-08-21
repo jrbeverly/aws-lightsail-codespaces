@@ -98,5 +98,5 @@ add-apt-repository ppa:certbot/certbot
 apt install python-certbot-nginx
 
 # Installing extensions to vscode
-code-server --install-extension hashicorp.terraform
-code-server --install-extension vscode-icons-team.vscode-icons
+sudo su -c "code-server --extensions-dir /var/lib/code-server/extensions --install-extension hashicorp.terraform" coder
+sudo su -c "code-server --extensions-dir /var/lib/code-server/extensions --install-extension vscode-icons-team.vscode-icons" coder
