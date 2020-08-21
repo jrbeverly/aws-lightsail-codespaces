@@ -1,26 +1,7 @@
-provider "aws" {
-  region = local.region
-}
-
-resource "random_id" "random" {
-  byte_length = 4
-}
-
-resource "random_integer" "unique" {
-  min     = 100
-  max     = 999
-}
-resource "random_password" "password" {
-  length = 16
-  special = true
-  override_special = "_%@"
-}
-
 locals {
   name              = "codespace-${random_integer.unique.result}"
   domain            = "jrbeverly.dev"
   url               = "${local.name}.${local.domain}"
-  region            = "ca-central-1"
   availability_zone = "ca-central-1a"
 }
 
