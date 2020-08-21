@@ -6,6 +6,10 @@ resource "random_id" "random" {
   byte_length = 4
 }
 
+resource "random_integer" "unique" {
+  min     = 100
+  max     = 999
+}
 resource "random_password" "password" {
   length = 16
   special = true
@@ -13,7 +17,7 @@ resource "random_password" "password" {
 }
 
 locals {
-  name              = "codespace-4321"
+  name              = "codespace-${random_integer.unique.result}"
   domain            = "jrbeverly.dev"
   url               = "${local.name}.${local.domain}"
   region            = "ca-central-1"
@@ -80,17 +84,4 @@ resource "aws_lightsail_static_ip_attachment" "app" {
 
 resource "aws_lightsail_static_ip" "app" {
   name = local.name
-}
-
-
-output "url" {
-  value = local.url
-}
-
-output "ip_address" {
-  value = aws_lightsail_static_ip.app.ip_address
-}
-
-output "password" {
-  value = random_password.password.result
 }
