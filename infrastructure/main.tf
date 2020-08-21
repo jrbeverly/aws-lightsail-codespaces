@@ -2,6 +2,7 @@ locals {
   name              = "codespace-${random_integer.unique.result}"
   domain            = "jrbeverly.dev"
   url               = "${local.name}.${local.domain}"
+  webmaster         = "admin@jrbeverly.dev"
   availability_zone = "ca-central-1a"
 }
 
@@ -16,7 +17,7 @@ resource "aws_lightsail_instance" "app" {
     desc = "Cloud environment for running VSCode in the browser."
   }
 
-  user_data = replace(replace(file("provision/prototype.sh"), "TF_DOMAIN_URL", local.url), "TF_PASSWORD", random_password.password.result)
+  user_data = replace(replace(replace(file("provision/prototype.sh"), "TF_DOMAIN_URL", local.url), "TF_PASSWORD", random_password.password.result), "TF_DOMAIN_WEBMASTER", local.webmaster)
 }
 
 ## WORKAROUND

@@ -1,6 +1,6 @@
 locals {
   region  = "ca-central-1"
-  profile = "default"
+  profile = "home"
 }
 provider "aws" {
   region = local.region

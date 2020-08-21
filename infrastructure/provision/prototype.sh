@@ -2,6 +2,7 @@
 
 export DEBIAN_FRONTEND=noninteractive
 export CODE_SERVER_VERSION=3.4.1
+export CODE_SERVER_WORKSPACE="/home/coder/workspace"
 release=code-server-${CODE_SERVER_VERSION}-linux-amd64
 touch /tmp/hello-world
 
@@ -33,8 +34,8 @@ echo "LANG=en_US.UTF-8" >> /etc/environment
 
 adduser --gecos '' --disabled-password coder
 echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd
-mkdir -p /home/coder /var/lib/code-server
-chown coder:coder /var/lib/code-server
+mkdir -p "${CODE_SERVER_WORKSPACE}" /var/lib/code-server
+chown coder:coder "${CODE_SERVER_WORKSPACE}" /var/lib/code-server
 
 #
 mkdir /tmp/code-server
@@ -60,7 +61,7 @@ After=nginx.service
 [Service]
 Type=simple
 Environment=PASSWORD="TF_PASSWORD"
-ExecStart=/usr/bin/code-server --bind-addr 127.0.0.1:8080 --user-data-dir /var/lib/code-server --auth password
+ExecStart=/usr/bin/code-server ${CODE_SERVER_WORKSPACE} --bind-addr 127.0.0.1:8080 --user-data-dir /var/lib/code-server --auth password
 Restart=always
 User=coder
 
@@ -96,7 +97,12 @@ systemctl restart nginx
 # Secure the domain
 add-apt-repository ppa:certbot/certbot
 apt install python-certbot-nginx
+certbot --nginx -d "TF_DOMAIN_URL" --non-interactive --agree-tos -m "TF_DOMAIN_WEBMASTER"
 
 # Installing extensions to vscode
-sudo su -c "code-server --extensions-dir /var/lib/code-server/extensions --install-extension hashicorp.terraform" coder
-sudo su -c "code-server --extensions-dir /var/lib/code-server/extensions --install-extension vscode-icons-team.vscode-icons" coder
+run_cs() {
+  sudo su -c "code-server --user-data-dir /var/lib/code-server --extensions-dir /var/lib/code-server/extensions $@" coder
+}
+
+run_cs "--install-extension hashicorp.terraform"
+run_cs "--install-extension vscode-icons-team.vscode-icons"
