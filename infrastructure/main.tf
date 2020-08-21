@@ -2,8 +2,18 @@ provider "aws" {
   region = local.region
 }
 
+resource "random_id" "random" {
+  byte_length = 4
+}
+
+resource "random_password" "password" {
+  length = 16
+  special = true
+  override_special = "_%@"
+}
+
 locals {
-  name              = "codespace"
+  name              = "codespace-4321"
   domain            = "jrbeverly.dev"
   url               = "${local.name}.${local.domain}"
   region            = "ca-central-1"
@@ -21,7 +31,7 @@ resource "aws_lightsail_instance" "app" {
     desc = "Cloud environment for running VSCode in the browser."
   }
 
-  user_data = file("provision/install.sh")
+  user_data = replace(replace(file("provision/prototype.sh"), "TF_DOMAIN_URL", local.url), "TF_PASSWORD", random_password.password.result)
 }
 
 ## WORKAROUND
@@ -63,7 +73,6 @@ resource "null_resource" "firewall" {
 
 ###
 
-
 resource "aws_lightsail_static_ip_attachment" "app" {
   static_ip_name = aws_lightsail_static_ip.app.name
   instance_name  = aws_lightsail_instance.app.name
@@ -73,3 +82,15 @@ resource "aws_lightsail_static_ip" "app" {
   name = local.name
 }
 
+
+output "url" {
+  value = local.url
+}
+
+output "ip_address" {
+  value = aws_lightsail_static_ip.app.ip_address
+}
+
+output "password" {
+  value = random_password.password.result
+}
