@@ -33,6 +33,8 @@ echo "LANG=en_US.UTF-8" >> /etc/environment
 
 adduser --gecos '' --disabled-password coder
 echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd
+mkdir -p /home/coder /var/lib/code-server
+chown coder:coder /var/lib/code-server
 
 #
 mkdir /tmp/code-server
@@ -47,7 +49,6 @@ rm ${release}.tar.gz
 cp -r ${release} /usr/lib/code-server
 rm -rf ${release}
 ln -s /usr/lib/code-server/bin/code-server /usr/bin/code-server
-mkdir /var/lib/code-server
 
 # Configure systemctl
 touch /lib/systemd/system/code-server.service
