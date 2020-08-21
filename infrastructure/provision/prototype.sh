@@ -2,13 +2,37 @@
 
 export DEBIAN_FRONTEND=noninteractive
 export CODE_SERVER_VERSION=3.4.1
-release=code-server-${CODE_SERVER_VERSION}-linux-arm64
-
+release=code-server-${CODE_SERVER_VERSION}-linux-amd64
 touch /tmp/hello-world
 
 sudo -s
+
+# Install server components
 apt-get update
 apt-get install -y nginx
+
+# Install tooling
+apt-get install -y \
+    curl \
+    dumb-init \
+    htop \
+    locales \
+    man \
+    nano \
+    git \
+    procps \
+    ssh \
+    sudo \
+    vim \
+    lsb-release
+sed -i "s/# en_US.UTF-8/en_US.UTF-8/" /etc/locale.gen
+locale-gen
+
+chsh -s /bin/bash
+echo "LANG=en_US.UTF-8" >> /etc/environment
+
+adduser --gecos '' --disabled-password coder
+echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd
 
 #
 mkdir /tmp/code-server
@@ -34,9 +58,10 @@ After=nginx.service
 
 [Service]
 Type=simple
-Environment=PASSWORD=TF_PASSWORD
+Environment=PASSWORD="TF_PASSWORD"
 ExecStart=/usr/bin/code-server --bind-addr 127.0.0.1:8080 --user-data-dir /var/lib/code-server --auth password
 Restart=always
+User=coder
 
 [Install]
 WantedBy=multi-user.target
@@ -54,7 +79,7 @@ server {
     server_name TF_DOMAIN_URL;
 
     location / {
-      proxy_pass http://localhost:8080/;
+      proxy_pass http://127.0.0.1:8080/;
       proxy_set_header Upgrade \$http_upgrade;
       proxy_set_header Connection upgrade;
       proxy_set_header Accept-Encoding gzip;
@@ -62,18 +87,11 @@ server {
 }
 EOF
 ln -s /etc/nginx/sites-available/code-server.conf /etc/nginx/sites-enabled/code-server.conf
+unlink /etc/nginx/sites-enabled/default
+
 nginx -t &> /tmp/nginx
 systemctl restart nginx
 
 # Secure the domain
 add-apt-repository ppa:certbot/certbot
 apt install python-certbot-nginx
-
-# ufw --force enable
-# ufw default deny
-# iptables -L
-ufw app list
-ufw allow 'Nginx HTTP'
-ufw allow https
-# ufw reload
-ufw status
