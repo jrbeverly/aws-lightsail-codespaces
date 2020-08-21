@@ -96,3 +96,7 @@ systemctl restart nginx
 # Secure the domain
 add-apt-repository ppa:certbot/certbot
 apt install python-certbot-nginx
+
+# Installing extensions to vscode
+code-server --install-extension hashicorp.terraform
+code-server --install-extension vscode-icons-team.vscode-icons
