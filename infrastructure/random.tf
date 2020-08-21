@@ -7,7 +7,6 @@ resource "random_integer" "unique" {
   max = 999
 }
 resource "random_password" "password" {
-  length           = 128
-  special          = true
-  override_special = "_%@"
+  length           = 64
+  special          = false
 }
