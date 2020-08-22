@@ -85,6 +85,11 @@ server {
       proxy_set_header Upgrade \$http_upgrade;
       proxy_set_header Connection upgrade;
       proxy_set_header Accept-Encoding gzip;
+      proxy_set_header X-Real-IP \$remote_addr;
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header Host \$host;
+      proxy_set_header X-NginX-Proxy true;
+      proxy_redirect http://127.0.0.1:8080/ https://\$server_name/;
     }
 }
 EOF
@@ -95,8 +100,9 @@ nginx -t &> /tmp/nginx
 systemctl restart nginx
 
 # Secure the domain
-add-apt-repository ppa:certbot/certbot
-apt install python-certbot-nginx
+add-apt-repository ppa:certbot/certbot -y
+apt-get update
+apt-get install -y python-certbot-nginx
 certbot --nginx -d "TF_DOMAIN_URL" --non-interactive --agree-tos -m "TF_DOMAIN_WEBMASTER"
 
 # Installing extensions to vscode
