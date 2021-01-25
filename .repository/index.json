@@ -1,0 +1,20 @@
+{
+  "slug": "aws-lightsail-codespaces",
+  "namespace": "jrbeverly",
+  "status": "archived",
+  "icon": "icon.svg",
+  "license": {
+    "type": "MIT",
+    "content": "Jonathan Beverly <jrbeverly>"
+  },
+  "topics": [
+    "aws-lightsail",
+    "codespaces",
+    "code-server"
+  ],
+  "languages": [
+    "Dockerfile",
+    "HCL",
+    "Shell"
+  ]
+}
