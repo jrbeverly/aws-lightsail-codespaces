@@ -1,0 +1,16 @@
+slug: aws-lightsail-codespaces
+description: code-server running on AWS Lightsail
+project: workbench
+namespace:
+status: archived
+icon: icon.svg
+license:
+  type: MIT
+  content: Jonathan Beverly <jrbeverly>
+  year: 2020
+topics: |-
+  [
+    "aws-lightsail",
+    "codespaces",
+    "code-server"
+  ]
